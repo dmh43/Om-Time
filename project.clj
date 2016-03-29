@@ -13,7 +13,8 @@
                  [compojure "1.5.0"]
                  [environ "1.0.2"]
                  [org.omcljs/om "1.0.0-alpha31"]
-                 [racehub/om-bootstrap "0.5.0"]]
+                 [racehub/om-bootstrap "0.5.0"]
+                 [org.clojure/core.async "0.2.374"]]
 
   :plugins [[lein-cljsbuild "1.1.1"]
             [lein-environ "1.0.1"]]
