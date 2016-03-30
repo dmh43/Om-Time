@@ -2,32 +2,16 @@
   (:require-macros [cljs.core.async.macros :refer [go]])
   (:require [om.core :as om :include-macros true]
             [om.dom :as dom :include-macros true]
-            [om-bootstrap.random :as r]
             [cljs.core.async :refer [put! chan <!]]
-            [om-time.clock :as c]))
+            [om-time.clock :as c]
+            [om-time.timer :as t]
+            [om-time.events :as e]))
 
 (enable-console-print!)
 
-(defonce app-state (atom {:text "Relax" :sec-remaining 0}))
+(defonce app-state (atom {:text "Relax"}))
 
-(defn stop-timer
-  [timer owner]
-  (js/clearInterval timer)
-  (om/set-state! owner :timer nil))
-
-(defn start-timer
-  [owner]
-  (let [timer (js/setInterval
-               #(om/update-state! owner :sec-remaining dec)
-               1000)]
-    (om/set-state! owner :timer timer)))
-
-(defn start-stop-timer
-  [owner]
-  (let [timer (om/get-state owner :timer)]
-    (if timer
-      (stop-timer timer owner)
-      (start-timer owner))))
+(def standard-time (* 20 60))
 
 (defn root-component [app owner]
   (reify
@@ -35,27 +19,35 @@
     (init-state [_]
       {:events {:set-time (chan)
                 :play-pause (chan)}
-       :sec-remaining 1000
-       :timer nil})
+       :sec-remaining 0
+       :timer nil
+       :base-time standard-time})
 
     om/IWillMount
     (will-mount [_]
-      (let [set-time (om/get-state owner [:events :set-time])
-            play-pause (om/get-state owner [:events :play-pause])]
-        (go (loop []
-              (let [new-time (<! set-time)]
-                (om/set-state! owner :sec-remaining new-time)
-                (recur))))
-        (go (loop []
-              (let [pp-event (<! play-pause)]
-                (start-stop-timer owner)
-                (recur))))))
+      (let [set-time-chan (om/get-state owner [:events :set-time])
+            start-stop-chan (om/get-state owner [:events :play-pause])]
+        (e/new-time-event-handler owner set-time-chan)
+        (e/start-stop-event-handler owner start-stop-chan)))
+
+    om/IDidMount
+    (did-mount [_]
+      (let [base-time (om/get-state owner :base-time)]
+        (om/set-state! owner :sec-remaining base-time)))
 
     om/IRenderState
-    (render-state [_ {{:keys [play-pause set-time]} :events}]
+    (render-state [_ {{:keys [play-pause set-time]} :events
+                      :keys [base-time]}]
       (dom/div
        {:className "root"}
-       (om/build c/clock (om/get-state owner :sec-remaining) {:init-state {:play-pause play-pause :set-time set-time}})))))
+       (dom/h1
+        #js {:className "title"}
+        (:text @app-state))
+       (om/build c/clock
+                 (om/get-state owner :sec-remaining)
+                 {:init-state {:play-pause-events play-pause
+                               :set-time-events set-time
+                               :base-time base-time}})))))
 
 (om/root
  root-component

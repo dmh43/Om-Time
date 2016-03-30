@@ -1,3 +1,32 @@
-h1 {
-  text-decoration: underline;
+body {
+  background-image: url(https://farm2.staticflickr.com/1510/25839123270_a6a7729c8d_k.jpg);
+}
+
+.title {
+  font-size: 20px;
+  font-weight: normal;
+  text-align: center;
+  line-height: 2;
+  opacity: 0.5;
+  visibility: hidden;
+}
+
+.clock-section {
+  height: 200px;
+  width: 100%;
+  background: rgba(0,0,0,0.30);
+  text-align: center;
+  position: relative;
+}
+
+.clock-container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+.clock {
+  font-size: 50px;
+  color: white;
+  opacity: 0.4;
 }

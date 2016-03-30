@@ -2,8 +2,9 @@
   (:require-macros [cljs.core.async.macros :refer [go]])
   (:require [om.core :as om :include-macros true]
             [om.dom :as dom :include-macros true]
+            [cljs.core.async :refer [put! chan <!]]
             [om-bootstrap.random :as r]
-            [cljs.core.async :refer [put! chan <!]]))
+            [om-bootstrap.button :as b]))
 
 (defn sec-to-min-sec
   [seconds]
@@ -20,11 +21,15 @@
     (init-state [_]
       (:init-state init))
     om/IRenderState
-    (render-state [_ {:keys [play-pause set-time]}]
+    (render-state [_ {:keys [play-pause-events set-time-events]}]
       (dom/div
-       nil
-       (r/jumbotron
-        {}
-        (dom/div nil (format-time (sec-to-min-sec sec-remaining)))
-        (dom/button #js {:onClick (fn [e] (put! play-pause :play-pause))} "Start/Stop")
-        (dom/button #js {:onClick (fn [e] (put! set-time 1000))} "Reset!"))))))
+       #js {:className "clock-section"}
+       (dom/div
+        #js {:className "clock-container"}
+        (dom/div
+         #js {:className "clock"}
+         (format-time (sec-to-min-sec sec-remaining)))
+        (b/button-group
+         {:className "input-container"}
+         (b/button {:onClick (fn [e] (put! play-pause-events :play-pause))} "Start/Stop")
+         (b/button {:onClick (fn [e] (put! set-time-events (* 20 60)))} "Reset!")))))))
