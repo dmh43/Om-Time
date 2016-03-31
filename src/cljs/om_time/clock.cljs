@@ -28,8 +28,9 @@
         #js {:className "clock-container"}
         (dom/div
          #js {:className "clock"}
-         (format-time (sec-to-min-sec sec-remaining)))
+         (str (format-time (sec-to-min-sec sec-remaining))))
+        (dom/div #js {:className "day"} (.toDateString (js/Date.)))
         (b/button-group
          {:className "input-container"}
-         (b/button {:onClick (fn [e] (put! play-pause-events :play-pause))} "Start/Stop")
-         (b/button {:onClick (fn [e] (put! set-time-events (* 20 60)))} "Reset!")))))))
+         (b/button {:onClick (fn [e] (put! play-pause-events :play-pause))} "Start")
+         (b/button {:onClick (fn [e] (put! set-time-events (* 20 60)))} "Reset")))))))
