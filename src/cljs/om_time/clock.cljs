@@ -13,24 +13,48 @@
 
 (defn format-time
   [time]
-  (str (:minutes time) ":" (when (< (:seconds time) 10) 0) (:seconds time)))
+  (str (:minutes time)
+       ":"
+       (when (< (:seconds time) 10) 0)
+       (:seconds time)))
 
-(defn clock [sec-remaining owner init]
+(defn start-stop-handler
+  [play-pause-events cursor e]
+  (put! play-pause-events :play-pause)
+  (om/transact! cursor :counting? not))
+
+(defn start-stop-button [{:keys [play-pause-events cursor]}]
   (reify
-    om/IInitState
-    (init-state [_]
-      (:init-state init))
-    om/IRenderState
-    (render-state [_ {:keys [play-pause-events set-time-events]}]
+    om/IRender
+    (render [_]
+      (b/button
+       {:onClick (partial start-stop-handler play-pause-events cursor)}
+       (if (:counting? cursor)
+         "Stop"
+         "Start")))))
+
+(defn clock [cursor owner]
+  (reify
+    om/IRender
+    (render [_]
       (dom/div
        #js {:className "clock-section"}
        (dom/div
         #js {:className "clock-container"}
         (dom/div
          #js {:className "clock"}
-         (str (format-time (sec-to-min-sec sec-remaining))))
-        (dom/div #js {:className "day"} (.toDateString (js/Date.)))
-        (b/button-group
-         {:className "input-container"}
-         (b/button {:onClick (fn [e] (put! play-pause-events :play-pause))} "Start")
-         (b/button {:onClick (fn [e] (put! set-time-events (* 20 60)))} "Reset")))))))
+         (do
+           (js/console.log (-> cursor :sec-remaining sec-to-min-sec format-time str))
+           (-> cursor
+               :sec-remaining
+               sec-to-min-sec
+               format-time
+               str)))
+        (dom/div #js {:className "day"}
+                 (-> (js/Date.)
+                     .toDateString))
+        (om/build start-stop-button {:play-pause-events (get-in cursor [:events :play-pause])
+                                     :cursor cursor})
+        (b/button {:onClick #(put! (get-in cursor [:events :set-time])
+                                   (* 20 60))}
+                  "Reset"))))))

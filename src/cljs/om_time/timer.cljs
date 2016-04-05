@@ -6,31 +6,32 @@
   (.play (js/Audio. "./Tone.mp3")))
 
 (defn stop-timer
-  ([owner]
-   (stop-timer (om/get-state owner :timer) owner))
-  ([timer owner]
+  ([cursor]
+   (stop-timer (get cursor :timer) cursor))
+  ([timer cursor]
    (js/clearInterval timer)
-   (om/set-state! owner :timer nil)))
+   (om/transact! cursor :timer #(identity nil))))
 
 (defn on-times-up
-  [owner]
+  [cursor]
   (buzzer)
-  (stop-timer owner))
+  (stop-timer cursor))
 
 (defn time-keeper
-  [owner]
-  (om/update-state! owner :sec-remaining dec)
-  (when (= 0 (om/get-state owner :sec-remaining))
-    (on-times-up owner)))
+  [cursor]
+  (om/transact! cursor :sec-remaining dec)
+  (when (= 0 (get cursor :sec-remaining))
+    (on-times-up cursor))
+  (js/console.log (om/value @cursor)))
 
 (defn start-timer
-  [owner]
-  (let [timer (js/setInterval #(time-keeper owner) 1000)]
-    (om/set-state! owner :timer timer)))
+  [cursor]
+  (let [timer (js/setInterval #(time-keeper cursor) 1000)]
+    (om/transact! cursor :timer #(identity timer))))
 
 (defn start-stop-timer
-  [owner]
-  (let [timer (om/get-state owner :timer)]
+  [cursor]
+  (let [timer (get cursor :timer)]
     (if timer
-      (stop-timer timer owner)
-      (start-timer owner))))
+      (stop-timer timer cursor)
+      (start-timer cursor))))

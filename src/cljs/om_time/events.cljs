@@ -5,17 +5,18 @@
             [om-time.timer :as t]))
 
 (defn new-time-event-handler
-  [owner set-time-chan]
-  (go (loop []
-        (let [new-time (<! set-time-chan)]
-          (t/start-stop-timer owner)
-          (om/set-state! owner :sec-remaining new-time)
-          (t/start-stop-timer owner)
-          (recur)))))
+  [cursor]
+  (let [set-time (get-in cursor [:events :set-time])]
+    (go (loop []
+          (let [new-time (<! set-time)]
+            (t/stop-timer cursor)
+            (om/transact! cursor :sec-remaining #(identity new-time))
+            (recur))))))
 
 (defn start-stop-event-handler
-  [owner start-stop-chan]
-  (go (loop []
-        (let [pp-event (<! start-stop-chan)]
-          (t/start-stop-timer owner)
-          (recur)))))
+  [cursor]
+  (let [play-pause (get-in cursor [:events :play-pause])]
+    (go (loop []
+          (let [pp-event (<! play-pause)]
+            (t/start-stop-timer cursor)
+            (recur))))))
