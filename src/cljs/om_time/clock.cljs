@@ -20,41 +20,45 @@
 
 (defn start-stop-handler
   [play-pause-events cursor e]
-  (put! play-pause-events :play-pause)
-  (om/transact! cursor :counting? not))
+  (put! play-pause-events :play-pause))
 
-(defn start-stop-button [{:keys [play-pause-events cursor]}]
+(defn start-stop-button [{:keys [play-pause-events cursor]} owner]
   (reify
+    om/IWillMount
+    (will-mount [_]
+      (om/observe owner cursor))
     om/IRender
     (render [_]
       (b/button
        {:onClick (partial start-stop-handler play-pause-events cursor)}
-       (if (:counting? cursor)
+       (if (:counting? @cursor)
          "Stop"
          "Start")))))
 
 (defn clock [cursor owner]
   (reify
+    om/IWillMount
+    (will-mount [_]
+      (om/observe owner cursor))
     om/IRender
     (render [_]
+      (js/console.log 333)
       (dom/div
        #js {:className "clock-section"}
        (dom/div
         #js {:className "clock-container"}
         (dom/div
          #js {:className "clock"}
-         (do
-           (js/console.log (-> cursor :sec-remaining sec-to-min-sec format-time str))
-           (-> cursor
-               :sec-remaining
-               sec-to-min-sec
-               format-time
-               str)))
+         (-> @cursor
+             :sec-remaining
+             sec-to-min-sec
+             format-time
+             str))
         (dom/div #js {:className "day"}
                  (-> (js/Date.)
                      .toDateString))
         (om/build start-stop-button {:play-pause-events (get-in cursor [:events :play-pause])
                                      :cursor cursor})
         (b/button {:onClick #(put! (get-in cursor [:events :set-time])
-                                   (* 20 60))}
+                                   (get cursor :base-time))}
                   "Reset"))))))

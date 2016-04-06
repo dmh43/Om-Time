@@ -10,13 +10,13 @@
     (go (loop []
           (let [new-time (<! set-time)]
             (t/stop-timer cursor)
-            (om/transact! cursor :sec-remaining #(identity new-time))
+            (om/update! cursor :sec-remaining new-time)
             (recur))))))
 
 (defn start-stop-event-handler
   [cursor]
   (let [play-pause (get-in cursor [:events :play-pause])]
     (go (loop []
-          (let [pp-event (<! play-pause)]
+          (let [_ (<! play-pause)]
             (t/start-stop-timer cursor)
             (recur))))))

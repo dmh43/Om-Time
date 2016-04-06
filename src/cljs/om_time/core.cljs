@@ -4,11 +4,14 @@
             [om.dom :as dom :include-macros true]
             [cljs.core.async :refer [put! chan <!]]
             [om-time.clock :as c]
-            [om-time.events :as e]))
+            [om-time.events :as e]
+            [devtools.core :as devtools]))
+
+(devtools/install!)
 
 (enable-console-print!)
 
-(def standard-time (* 20 60))
+(def standard-time (* 60 20))
 
 (defonce app-state (atom {:events {:set-time (chan)
                                    :play-pause (chan)}
@@ -29,8 +32,7 @@
 
     om/IDidMount
     (did-mount [_]
-      (let [base-time (get ref :base-time)]
-        (swap! app-state assoc :sec-remaining base-time)))
+      (om/transact! ref :sec-remaining #(get ref :base-time)))
 
     om/IRender
     (render [_]
