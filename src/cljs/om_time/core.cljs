@@ -1,11 +1,13 @@
 (ns om-time.core
-  (:require-macros [cljs.core.async.macros :refer [go]])
+  (:require-macros [cljs.core.async.macros :refer [go]]
+                   [plumbing.core :as p])
   (:require [om.core :as om :include-macros true]
             [om.dom :as dom :include-macros true]
             [cljs.core.async :refer [put! chan <!]]
             [om-time.clock :as c]
             [om-time.events :as e]
-            [devtools.core :as devtools]))
+            [devtools.core :as devtools]
+            [om-time.personal :as p]))
 
 (devtools/install!)
 
@@ -38,7 +40,8 @@
     (render [_]
       (dom/div
        #js {:className "root"}
-       (om/build c/clock ref)))))
+       (om/build c/clock ref)
+       #_(om/build p/personal nil)))))
 
 (om/root
  root-component

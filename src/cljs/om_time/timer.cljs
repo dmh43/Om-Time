@@ -8,13 +8,13 @@
 (defn stop-timer
   [cursor]
   (js/clearInterval (get @cursor :timer))
-  (js/console.log (get @cursor :timer))
   (om/update! cursor :timer nil)
   (om/update! cursor :counting? false))
 
 (defn on-times-up
   [cursor]
   (buzzer)
+  (om/update! cursor :sec-remaining (get cursor :base-time))
   (stop-timer cursor))
 
 (defn time-keeper

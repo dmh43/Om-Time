@@ -3,8 +3,7 @@
   (:require [om.core :as om :include-macros true]
             [om.dom :as dom :include-macros true]
             [cljs.core.async :refer [put! chan <!]]
-            [om-bootstrap.random :as r]
-            [om-bootstrap.button :as b]))
+            [om-bootstrap.random :as r]))
 
 (defn sec-to-min-sec
   [seconds]
@@ -19,21 +18,19 @@
        (:seconds time)))
 
 (defn start-stop-handler
-  [play-pause-events cursor e]
+  [play-pause-events e]
   (put! play-pause-events :play-pause))
 
-(defn start-stop-button [{:keys [play-pause-events cursor]} owner]
+(defn start-stop-button [{:keys [play-pause-events counting?]} owner]
   (reify
-    om/IWillMount
-    (will-mount [_]
-      (om/observe owner cursor))
     om/IRender
     (render [_]
-      (b/button
-       {:onClick (partial start-stop-handler play-pause-events cursor)}
-       (if (:counting? @cursor)
-         "Stop"
-         "Start")))))
+      (dom/div
+       #js {:onClick (partial start-stop-handler play-pause-events)
+            :id "start-stop"}
+       (if counting?
+         (r/glyphicon {:glyph "pause"})
+         (r/glyphicon {:glyph "play"}))))))
 
 (defn clock [cursor owner]
   (reify
@@ -42,7 +39,6 @@
       (om/observe owner cursor))
     om/IRender
     (render [_]
-      (js/console.log 333)
       (dom/div
        #js {:className "clock-section"}
        (dom/div
@@ -57,8 +53,11 @@
         (dom/div #js {:className "day"}
                  (-> (js/Date.)
                      .toDateString))
-        (om/build start-stop-button {:play-pause-events (get-in cursor [:events :play-pause])
-                                     :cursor cursor})
-        (b/button {:onClick #(put! (get-in cursor [:events :set-time])
-                                   (get cursor :base-time))}
-                  "Reset"))))))
+        (dom/div
+         #js {:className "button-container"}
+         (om/build start-stop-button {:play-pause-events (get-in cursor [:events :play-pause])
+                                      :counting? (get @cursor :counting?)})
+         (dom/div #js {:onClick #(put! (get-in cursor [:events :set-time])
+                                       (get cursor :base-time))
+                       :id "reset"}
+                  (r/glyphicon {:glyph "refresh"}))))))))
