@@ -6,10 +6,10 @@
             [cljs.core.async :refer [put! chan <!]]
             [om-time.clock :as c]
             [om-time.events :as e]
-            [devtools.core :as devtools]
+            ;[devtools.core :as devtools]
             [om-time.personal :as p]))
 
-(devtools/install!)
+;(devtools/install!)
 
 (enable-console-print!)
 
