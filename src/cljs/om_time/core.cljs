@@ -34,7 +34,8 @@
 
     om/IDidMount
     (did-mount [_]
-      (om/transact! ref :sec-remaining #(get ref :base-time)))
+      (om/transact! ref :sec-remaining #(get ref :base-time))
+      (aset document.body "background" (str "images/" (rand-int 6) ".jpg")))
 
     om/IRender
     (render [_]
