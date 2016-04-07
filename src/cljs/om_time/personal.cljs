@@ -9,7 +9,7 @@
       (dom/div
        #js {:className "personal"}
        (dom/a
-        #js {:href "www.github.com/dmh43"}
+        #js {:href "https://www.github.com/dmh43"}
         (dom/i #js {:className "fa fa-github"}))
        (dom/a
         #js {:href "https://github.com/dmh43/Om-Time"}
