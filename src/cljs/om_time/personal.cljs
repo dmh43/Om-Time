@@ -8,12 +8,12 @@
     (render [_]
       (dom/div
        #js {:className "personal"}
-       (dom/div
+       (dom/a
         #js {:href "www.github.com/dmh43"}
         (dom/i #js {:className "fa fa-github"}))
-       (dom/div
+       (dom/a
         #js {:href "https://github.com/dmh43/Om-Time"}
         (dom/i #js {:className "fa fa-code-fork"}))
-       (dom/div
+       (dom/a
         #js {:href "https://twitter.com/danyhaddad43"}
         (dom/i #js {:className "fa fa-twitter"}))))))

@@ -60,11 +60,12 @@ body {
   bottom: 5px;
 }
 
-.personal div {
+.personal a {
   display: inline-block;
   margin: 5px;
+  color: black;
 }
 
-.personal div:hover {
+.personal a:hover {
   opacity: 0.8;
 }
