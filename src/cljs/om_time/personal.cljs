@@ -1,7 +1,6 @@
 (ns om-time.personal
   (:require [om.core :as om :include-macros true]
-            [om.dom :as dom :include-macros true]
-            [om-bootstrap.random :as r]))
+            [om.dom :as dom :include-macros true]))
 
 (defn personal [_ owner]
   (reify
@@ -11,4 +10,10 @@
        #js {:className "personal"}
        (dom/div
         #js {:href "www.github.com/dmh43"}
-        (r/glyphicon {:glyph "user"}))))))
+        (dom/i #js {:className "fa fa-github"}))
+       (dom/div
+        #js {:href "https://github.com/dmh43/Om-Time"}
+        (dom/i #js {:className "fa fa-code-fork"}))
+       (dom/div
+        #js {:href "https://twitter.com/danyhaddad43"}
+        (dom/i #js {:className "fa fa-twitter"}))))))

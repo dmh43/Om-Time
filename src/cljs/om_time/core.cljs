@@ -39,9 +39,9 @@
     om/IRender
     (render [_]
       (dom/div
-       #js {:className "root"}
-       (om/build c/clock ref)
-       #_(om/build p/personal nil)))))
+       #js {:className "ui-section"}
+       (om/build p/personal nil)
+       (om/build c/clock ref)))))
 
 (om/root
  root-component

@@ -40,24 +40,22 @@
     om/IRender
     (render [_]
       (dom/div
-       #js {:className "clock-section"}
+       #js {:className "clock-container"}
        (dom/div
-        #js {:className "clock-container"}
-        (dom/div
-         #js {:className "clock"}
-         (-> @cursor
-             :sec-remaining
-             sec-to-min-sec
-             format-time
-             str))
-        (dom/div #js {:className "day"}
-                 (-> (js/Date.)
-                     .toDateString))
-        (dom/div
-         #js {:className "button-container"}
-         (om/build start-stop-button {:play-pause-events (get-in cursor [:events :play-pause])
-                                      :counting? (get @cursor :counting?)})
-         (dom/div #js {:onClick #(put! (get-in cursor [:events :set-time])
-                                       (get cursor :base-time))
-                       :id "reset"}
-                  (r/glyphicon {:glyph "refresh"}))))))))
+        #js {:className "clock"}
+        (-> @cursor
+            :sec-remaining
+            sec-to-min-sec
+            format-time
+            str))
+       (dom/div #js {:className "day"}
+                (-> (js/Date.)
+                    .toDateString))
+       (dom/div
+        #js {:className "button-container"}
+        (om/build start-stop-button {:play-pause-events (get-in cursor [:events :play-pause])
+                                     :counting? (get @cursor :counting?)})
+        (dom/div #js {:onClick #(put! (get-in cursor [:events :set-time])
+                                      (get cursor :base-time))
+                      :id "reset"}
+                 (r/glyphicon {:glyph "refresh"})))))))
