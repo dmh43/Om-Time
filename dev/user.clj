@@ -9,7 +9,7 @@
 (set! *warn-on-reflection* true)
 (set! *unchecked-math* :warn-on-boxed)
 (def http-handler
-  (wrap-reload #'om-time.server/http-handler))
+  (wrap-reload #'om-time.server/app))
 
 (defn run []
   (figwheel/start-figwheel!))

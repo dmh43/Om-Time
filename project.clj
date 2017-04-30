@@ -17,7 +17,10 @@
                  [org.clojure/core.async "0.2.374"]]
 
   :plugins [[lein-cljsbuild "1.1.1"]
-            [lein-environ "1.0.1"]]
+            [lein-environ "1.0.1"]
+            [lein-ring "0.9.7"]]
+
+  :ring {:handler om-time.server/app}
 
   :min-lein-version "2.6.1"
 
@@ -41,7 +44,7 @@
               {:app
                {:source-paths ["src/cljs"]
 
-                :figwheel true
+                ;; :figwheel true
                 ;; Alternatively, you can configure a function to run every time figwheel reloads.
                 ;; :figwheel {:on-jsload "om-time.core/on-figwheel-reload"}
 
@@ -66,7 +69,7 @@
              ;; assets and API endpoints can all be accessed on the same host
              ;; and port. If you prefer a separate server process then take this
              ;; out and start the server with `lein run`.
-             :ring-handler user/http-handler
+             ;; :ring-handler user/http-handler
 
              ;; Start an nREPL server into the running figwheel process. We
              ;; don't do this, instead we do the opposite, running figwheel from
@@ -92,6 +95,7 @@
                              [figwheel-sidecar "0.5.1"]
                              [com.cemerick/piggieback "0.2.1"]
                              [org.clojure/tools.nrepl "0.2.12"]
+                             [lein-doo "0.1.7"]
                              ;[binaryage/devtools "0.6.0"]
                              ]
 

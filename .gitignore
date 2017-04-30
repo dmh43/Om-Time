@@ -13,3 +13,8 @@
 figwheel_server.log
 pom.xml
 pom.xml.asc
+
+# Elastic Beanstalk Files
+.elasticbeanstalk/*
+!.elasticbeanstalk/*.cfg.yml
+!.elasticbeanstalk/*.global.yml
